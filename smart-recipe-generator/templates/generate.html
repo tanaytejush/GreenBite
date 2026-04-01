@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Recipe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-yellow-50 to-orange-100 min-h-screen flex items-center justify-center font-sans">
+  <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full">
+    <h1 class="text-2xl font-bold text-orange-600 text-center mb-6">👩‍🍳 Recipe Generator</h1>
+
+    <form action="/generate_recipe" method="POST" class="space-y-4" id="recipeForm">
+
+      <!-- Ingredients -->
+      <div>
+        <label class="block text-gray-700 font-medium">1. What ingredients do you have?</label>
+        <div id="ingredients-container" class="space-y-2">
+          <input type="text" name="ingredients[]" placeholder="e.g. Zucchini"
+                 class="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+        </div>
+        <button type="button" id="add-ingredient"
+                class="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">
+          + Add Another Ingredient
+        </button>
+      </div>
+
+      <!-- Kitchen tools -->
+      <div>
+        <label class="block text-gray-700 font-medium">2. Kitchen tools available</label>
+        <select name="tools" multiple class="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+          <option value="Stove Top">Stove Top</option>
+          <option value="Oven">Oven</option>
+          <option value="Microwave">Microwave</option>
+          <option value="Air Fryer">Air Fryer</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">Hold Ctrl (Cmd on Mac) to select multiple</p>
+      </div>
+
+      <!-- Time available -->
+      <div>
+        <label class="block text-gray-700 font-medium">3. How much time do you have? (in minutes)</label>
+        <input type="number" name="time" min="5" max="180" step="5"
+               class="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+      </div>
+
+      <!-- Skill level -->
+      <div>
+        <label class="block text-gray-700 font-medium">4. How skilled are you at cooking?</label>
+        <select name="skill" class="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Expert">Expert</option>
+        </select>
+      </div>
+
+      <!-- Chef Mode -->
+      <div>
+        <label class="block text-gray-700 font-medium">5. Chef Mode</label>
+        <select name="chef_mode" class="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+          <option value="Quick & Easy">Quick & Easy</option>
+          <option value="Gourmet">Gourmet</option>
+          <option value="Budget Friendly">Budget Friendly</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button id="submitButton" type="submit"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+          Generate Recipe
+        </button>
+      </div>
+
+      <!-- Spinning Strawberry Loader -->
+      <div id="spinner" class="hidden flex flex-col items-center mt-4">
+        <div class="text-4xl animate-spin">🍓</div>
+        <p class="text-sm text-pink-500 mt-2 italic">Blending the juiciest recipes for you...</p>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- JS to Add Multiple Ingredients -->
+  <script>
+    document.getElementById("add-ingredient").addEventListener("click", function () {
+      const container = document.getElementById("ingredients-container");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = "ingredients[]";
+      input.placeholder = "e.g. Cheese";
+      input.className = "w-full mt-1 p-2 border border-gray-300 rounded-lg";
+      container.appendChild(input);
+    });
+
+    document.getElementById("recipeForm").addEventListener("submit", function () {
+      document.getElementById("submitButton").style.display = "none";
+      document.getElementById("spinner").classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>

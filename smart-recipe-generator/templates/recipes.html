@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Recipes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-orange-50 min-h-screen p-6 font-sans">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-orange-700 text-center mb-8">🍽️ Your Recipe Suggestions</h1>
+
+    {% if recipes %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for recipe in recipes %}
+          <div class="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between">
+            <img src="{{ recipe.image }}" alt="{{ recipe.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+
+            <h2 class="text-lg font-semibold text-gray-800">{{ recipe.title }}</h2>
+
+            <!-- Display Recipe Title -->
+            <h2 class="text-lg font-semibold text-gray-800">{{ recipe.title }}</h2>
+        
+            <!-- Display Recipe Name -->
+            <p class="text-sm text-gray-600 mb-2">{{ recipe.name }}</p>
+            
+            <!-- View Button to open detailed recipe page -->
+            <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}"
+               class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-center mt-2 block">
+              View Recipe
+            </a>
+
+            <!-- Save to Favorites Button -->
+            <form action="/save_favorite" method="POST">
+              <input type="hidden" name="id" value="{{ recipe.id }}">
+              <input type="hidden" name="title" value="{{ recipe.title }}">
+              <input type="hidden" name="image" value="{{ recipe.image }}">
+              <button type="submit"
+                      class="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 transition text-sm w-full mt-2">
+                Save to Favorites
+              </button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-gray-600">No recipes found. Try different ingredients!</p>
+    {% endif %}
+
+    <div class="text-center mt-10">
+      <a href="/generate"
+         class="inline-block bg-pink-200 text-pink-800 font-semibold px-4 py-2 rounded-full shadow hover:bg-pink-300 transition">
+        ⬅️ Back to Generator
+      </a>
+    </div>
+  </div>
+</body>
+</html>

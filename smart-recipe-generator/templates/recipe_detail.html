@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ recipe.title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-orange-50 min-h-screen font-sans p-6">
+  <div id="recipe-container" data-recipe-id="{{ recipe.id }}" class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-md">
+
+    <!-- Display Recipe Title -->
+    <h2 class="text-lg font-semibold text-gray-800">{{ recipe.title }}</h2>
+    <p class="text-sm text-gray-600 mb-2">{{ recipe.name }}</p>
+
+    {% if recipe.image %}
+      <img src="{{ recipe.image }}" alt="{{ recipe.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+    {% endif %}
+
+    <h2 class="text-xl font-semibold text-gray-800 mb-2">Ingredients:</h2>
+    <ul class="list-disc list-inside mb-4">
+      {% for ingredient in recipe.ingredients %}
+        <li>{{ ingredient }}</li>
+      {% endfor %}
+    </ul>
+
+    {% if recipe.instructions %}
+      <h2 class="text-xl font-semibold text-gray-800 mb-2">Instructions:</h2>
+      <ol class="list-decimal list-inside space-y-1 mb-4">
+        {% for step in recipe.instructions %}
+          <li>{{ step }}</li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p class="text-gray-600 italic mb-4">No instructions available for this recipe.</p>
+    {% endif %}
+
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Flavors:</h2>
+      <p class="text-gray-700">{{ recipe.flavors | join(', ') }}</p>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Allergens:</h2>
+      <p class="text-red-600">{{ recipe.allergens | join(', ') }}</p>
+    </div>
+
+    <a href="/generate" class="inline-block bg-orange-200 text-orange-800 px-4 py-2 rounded-full shadow hover:bg-orange-300 transition mt-4">
+      ⬅️ Back to Generator
+    </a>
+
+    <!-- 🎤 Assistant Section -->
+    <hr class="my-8">
+    <div style="margin-top: 20px;">
+      <h3>Ask me about this recipe:</h3>
+      <input id="userQuestion" type="text" placeholder="Ask about the recipe..." class="border border-gray-300 rounded px-2 py-1 w-full max-w-md mb-2" />
+      <div class="space-x-2">
+        <button onclick="askAssistant()" class="bg-orange-500 text-white px-4 py-1 rounded">Ask</button>
+        <button onclick="startListening()" class="bg-green-500 text-white px-4 py-1 rounded">🎤 Start Talking</button>
+        <button onclick="stopSpeaking()" class="bg-red-500 text-white px-4 py-1 rounded">🛑 Stop</button>
+      </div>
+
+      <p class="mt-4"><strong>Assistant:</strong> <span id="assistantResponse" class="text-gray-800"></span></p>
+    </div>
+  </div>
+
+<!-- Voice Assistant Section -->
+<div class="mt-6">
+  <h3 class="text-lg font-semibold">Ask me about this recipe:</h3>
+  
+  <div class="flex items-center gap-2 mt-2">
+    <input id="userQuestion" type="text" placeholder="Ask about the recipe..." class="border rounded px-3 py-2 w-full">
+    <button onclick="askAssistant()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Ask</button>
+    <button onclick="startListening()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">🎤</button>
+    <button onclick="stopSpeaking()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Stop</button>
+  </div>
+
+  <p class="mt-4"><strong>Assistant:</strong> <span id="assistantResponse" class="text-gray-800"></span></p>
+</div>
+
+<script>
+  const recipeData = {{ recipe|tojson }};
+  let recognition;
+  let speaking = false;
+
+  function askAssistant() {
+    const question = document.getElementById("userQuestion").value;
+    if (!question.trim()) return;
+
+    fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ question, recipe: recipeData })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const response = data.response;
+      document.getElementById("assistantResponse").innerText = response;
+      speak(response);
+    })
+    .catch(err => {
+      console.error("Assistant error:", err);
+      document.getElementById("assistantResponse").innerText = "Oops! Something went wrong.";
+    });
+  }
+
+  function speak(text) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    speaking = true;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stopSpeaking() {
+    speaking = false;
+    window.speechSynthesis.cancel();
+    if (recognition) recognition.stop();
+  }
+
+  function startListening() {
+    stopSpeaking(); // stop any ongoing speech first
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech Recognition not supported in this browser.");
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      document.getElementById("userQuestion").placeholder = "Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      document.getElementById("userQuestion").value = speechResult;
+      askAssistant(); // automatically ask after recognition
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.onend = () => {
+      document.getElementById("userQuestion").placeholder = "Ask about the recipe...";
+    };
+
+    recognition.start();
+  }
+</script>
+</body>
+</html>

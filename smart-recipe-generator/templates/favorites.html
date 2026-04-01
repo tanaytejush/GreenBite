@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Favorite Recipes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-50 min-h-screen p-6 font-sans">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-pink-600 text-center mb-8">🌸 Your Favorite Recipes</h1>
+
+    {% if recipes %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for recipe in recipes %}
+          <div class="bg-white rounded-xl shadow-md p-4 relative">
+
+            <!-- Remove Button -->
+            <form action="/remove_favorite/{{ recipe.id }}" method="POST" class="absolute top-2 right-2">
+              <button type="submit" title="Remove from favorites"
+                      class="text-pink-400 hover:text-red-500 font-bold text-xl transition duration-200">
+                ❌
+              </button>
+            </form>
+
+            <!-- Recipe Content -->
+            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="w-full h-48 object-cover rounded-md mb-3">
+            <h2 class="text-lg font-semibold text-gray-800">{{ recipe.title }}</h2>
+            <a href="https://spoonacular.com/recipes/{{ recipe.title | replace(' ', '-') }}-{{ recipe.recipe_id }}"
+               target="_blank"
+               class="text-blue-600 hover:underline text-sm">
+              View Full Recipe →
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-gray-600">No favorite recipes yet.</p>
+    {% endif %}
+
+    <div class="text-center mt-10">
+      <a href="/generate" class="inline-block bg-orange-100 text-orange-700 font-semibold px-4 py-2 rounded-full shadow hover:bg-orange-200 transition">
+        ⬅️ Back to Generator
+      </a>
+    </div>
+  </div>
+</body>
+</html>

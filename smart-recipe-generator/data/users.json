@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Sia",
+    "diet": "cutting",
+    "allergies": [
+      "nuts"
+    ],
+    "flavor_profile": [
+      "spicy",
+      "salty",
+      "cheesy",
+      "buttery"
+    ]
+  },
+  {
+    "name": "Sia",
+    "diet": "cutting",
+    "allergies": [
+      "nuts"
+    ],
+    "flavor_profile": [
+      "spicy",
+      "salty",
+      "buttery"
+    ]
+  },
+  {
+    "name": "Farhaan",
+    "diet": "bulking",
+    "allergies": [
+      "shellfish"
+    ],
+    "flavor_profile": [
+      "savory",
+      "buttery"
+    ]
+  },
+  {
+    "name": "Sia",
+    "diet": "cutting",
+    "allergies": [
+      "nuts"
+    ],
+    "flavor_profile": [
+      "spicy",
+      "salty",
+      "savory"
+    ]
+  }
+]
