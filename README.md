@@ -66,3 +66,8 @@ The app uses Supabase for accounts and favourites. Create your own Supabase proj
 | `/recipe_detail/<id>` | Recipe page |
 | `/favorites`, `/save_favorite`, `/remove_favorite/<id>` | Favourites |
 | `/ask_assistant`, `/chat` | Recipe assistant |
+
+
+---
+
+<sub>Made by [tanaytejush](https://github.com/tanaytejush)</sub>
